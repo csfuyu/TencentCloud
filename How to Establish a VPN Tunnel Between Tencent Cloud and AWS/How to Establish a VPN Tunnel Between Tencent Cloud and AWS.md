@@ -97,6 +97,13 @@ In this section, we will describe the high-level architecture for connecting Ten
 3. Go to Route Table and configure the routings for two tunnels. The VPN traffic will go to one of the tunnels as configured and go to the other if the first tunnel is down.
 ![](tencent vpn gw route.png)
 
+## Step 4: Create servers to test the VPN connection
+
+### 4.1 Create CVM from Tencent Cloud console
+
+1. Create CVM inside the subnet 192.168.2.0/24 created in Step 1.1, with public IP
+2. Create EC2 inside the subnet 172.31.0.0/20 created in step 2.1
+3. SSH to CVM, ping EC2 ![](ping.png)
 
 ## Conclusion
 
