@@ -17,8 +17,9 @@ Before proceeding, ensure you have the following:
 In this section, we will describe the high-level architecture for connecting Tencent Cloud and AWS using a VPN tunnel.
 
 - **VPC in Tencent Cloud** and **VPC in AWS** that will communicate via a VPN tunnel.
-- **Cloud VPN** in Tencent Cloud and **Virtual Private Gateway** in AWS.
+- It's a site-to-site vpn which will allow the servers in both side vpcs to see each other.
 - The VPN tunnel will be established over the internet using IKEv2/IPsec protocols.
+- There'll be two vpn tunnels to achieve HA.
 
 ![](./vpn.png)
 
@@ -36,22 +37,6 @@ In this section, we will describe the high-level architecture for connecting Ten
 2. Click **Create VPN Gateway** and choose IPSec as the protocal.
 3. After creation, you can get the gateway IP.
 
-### 1.3 Configure the VPN Tunnel (IPSec)
-
-1. Use the configuration details obtained from AWS to set up the **VPN Tunnel** in Tencent Cloud.
-2. Set the tunnel parameters such as IKE version, pre-shared keys, and encryption settings.
-
-### 1.4 Create the Customer Gateway (CGW) in Tencent Cloud
-
-1. In the **Tencent Cloud Console**, create a new **Customer Gateway** for the AWS side.
-2. Provide the public IP address of the VPN endpoint (this will be the external IP of AWS’s Virtual Private Gateway).
-3. Set the VPN routing options and authentication details.
-
-### 1.5 Testing the VPN Tunnel
-
-1. After configuring both sides, ensure that the VPN connection is **UP** and **active**.
-2. Run **ping tests** or other connectivity checks to verify the tunnel's operation.
-
 ## Step 2: Setting Up the VPN in AWS
 
 ### 2.1 Create a Virtual Private Cloud (VPC)
@@ -68,8 +53,8 @@ In this section, we will describe the high-level architecture for connecting Ten
 
 ### 2.3 Configure the Customer Gateway (CGW) in AWS
 
-1. In the **VPC Console**, create a new **Customer Gateway** for the Tencent Cloud side.
-2. Provide the public IP address of the VPN endpoint (this will be the external IP of Tencent Cloud’s VPN Gateway).
+1. In the **VPC Console**, create a new **Customer Gateway** for the Tencent Cloud VPN GW created in Step 1.
+2. Provide the public IP address of the VPN endpoint (this is the gateway IP in 1.2).
 
 ### 2.4 Create the VPN Connection in AWS
 
@@ -104,6 +89,12 @@ In this section, we will describe the high-level architecture for connecting Ten
 1. Create CVM inside the subnet 192.168.2.0/24 created in Step 1.1, with public IP
 2. Create EC2 inside the subnet 172.31.0.0/20 created in step 2.1
 3. SSH to CVM, ping EC2 ![](ping.png)
+
+## Step 5: HA Test
+
+1. There're two tunnels, and we can see the default tunnel is vpnx-1snh7wzk from 3.3 image. Then we can check the details of this tunnel and we can see the IP address of AWS tunnel.
+2. We can turn off this tunnel by disable the default routing shown in 3.3 image, then the traffic will go through the other tunnel.
+3. We can monitor the traffic by using the logs and monitoring tools in each side.
 
 ## Conclusion
 
